@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NERO 双臂控制台</title>
+  <link rel="stylesheet" href="/static/control_center.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="/assets/lerobot-logo.png" alt="LeRobot">
+      <div>
+        <h1>NERO 双臂控制台</h1>
+        <p>本机操作台 · agx_cando</p>
+      </div>
+    </div>
+    <div class="top-status">
+      <span id="envBadge" class="badge neutral">环境检查中</span>
+      <span id="runBadge" class="badge neutral">空闲</span>
+    </div>
+  </header>
+
+  <div class="safety-banner">
+    <strong>网页不是实体急停</strong>
+    <span>启动前支撑机械臂、清空夹爪并保持工作区无障碍；停止后必须确认关节与 AgxGripper 均已失能。</span>
+  </div>
+
+  <main class="layout">
+    <section class="panel controls">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">DEVICE MAP</span>
+          <h2>设备与运行参数</h2>
+        </div>
+        <span id="identityBadge" class="badge warning">身份未确认</span>
+      </div>
+
+      <div class="device-grid">
+        <fieldset>
+          <legend>主臂 / Leader</legend>
+          <label>CAN 通道
+            <input id="leaderChannel" type="number" min="0" max="31" value="0">
+          </label>
+          <label>固件档位
+            <select id="leaderFirmware">
+              <option value="v120">v120 · 1.20</option>
+              <option value="v121">v121 · 1.21</option>
+              <option value="v112">v112 · 1.12</option>
+              <option value="v111">v111 · 1.11</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>从臂 / Follower</legend>
+          <label>CAN 通道
+            <input id="followerChannel" type="number" min="0" max="31" value="1">
+          </label>
+          <label>固件档位
+            <select id="followerFirmware">
+              <option value="v121">v121 · 1.21</option>
+              <option value="v120">v120 · 1.20</option>
+              <option value="v112">v112 · 1.12</option>
+              <option value="v111">v111 · 1.11</option>
+            </select>
+          </label>
+        </fieldset>
+      </div>
+
+      <div class="field-row">
+        <label>映射模式</label>
+        <div class="segmented" role="group" aria-label="映射模式">
+          <button class="segment active" data-mapping="relative" type="button">相对起始姿态</button>
+          <button class="segment" data-mapping="absolute" type="button">绝对跟随</button>
+        </div>
+      </div>
+
+      <div class="slider-grid">
+        <label>发送频率 <output id="fpsValue">30 Hz</output>
+          <input id="fps" type="range" min="10" max="60" step="1" value="30">
+        </label>
+        <label>控制器速度 <output id="speedValue">20%</output>
+          <input id="speedPercent" type="range" min="1" max="30" step="1" value="20">
+        </label>
+        <label>关节速度限制 <output id="jointSpeedValue">0.30 rad/s</output>
+          <input id="maxJointSpeed" type="range" min="0.05" max="0.52" step="0.01" value="0.30">
+        </label>
+        <label>夹持力 <output id="forceValue">1.0 N</output>
+          <input id="gripperForce" type="range" min="0.1" max="5" step="0.1" value="1">
+        </label>
+      </div>
+
+      <div class="inline-options">
+        <label class="toggle-row">
+          <input id="returnToStart" type="checkbox">
+          <span>启动前回到 saved_start_pose.json</span>
+        </label>
+        <label class="duration">限时运行
+          <input id="duration" type="number" min="0.5" max="3600" step="0.5" placeholder="持续">
+          <span>秒</span>
+        </label>
+      </div>
+
+      <div class="identity-block">
+        <span class="eyebrow">IDENTITY CHECK</span>
+        <p>USB 插拔可能改变设备枚举。遥操作前必须先用当前配置执行只读检查。</p>
+        <button id="readOnlyBtn" class="button secondary" type="button"><span aria-hidden="true">◎</span> 只读身份检查</button>
+      </div>
+
+      <div class="checklist" aria-label="实体安全确认">
+        <label><input id="checkSupport" type="checkbox"><span>两台机械臂已可靠支撑</span></label>
+        <label><input id="checkGrippers" type="checkbox"><span>主从夹爪为空，未夹持物体</span></label>
+        <label><input id="checkArea" type="checkbox"><span>工作区清空，实体急停可立即使用</span></label>
+      </div>
+
+      <div class="primary-actions">
+        <button id="teleopBtn" class="button primary" type="button" disabled><span aria-hidden="true">▶</span> 启动双臂遥操作</button>
+        <button id="disableBtn" class="button danger-outline" type="button" disabled><span aria-hidden="true">■</span> 请求关节与 AgxGripper 失能</button>
+      </div>
+    </section>
+
+    <section class="panel runtime">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">RUNTIME</span>
+          <h2>运行状态</h2>
+        </div>
+        <div class="stop-actions">
+          <button id="stopBtn" class="button quiet" type="button" disabled><span aria-hidden="true">×</span> 停止</button>
+          <button id="stopDisableBtn" class="button danger" type="button" disabled><span aria-hidden="true">■</span> 停止并请求 AgxGripper 失能</button>
+        </div>
+      </div>
+
+      <div class="status-strip">
+        <div><span>状态</span><strong id="statusText">空闲</strong></div>
+        <div><span>任务</span><strong id="taskText">无</strong></div>
+        <div><span>PID</span><strong id="pidText">-</strong></div>
+        <div><span>退出码</span><strong id="exitText">-</strong></div>
+      </div>
+
+      <div class="visual-grid">
+        <div class="joint-panel">
+          <div class="subheading">
+            <h3>从臂关节反馈</h3>
+            <span id="gripperValue">夹爪 --</span>
+          </div>
+          <div id="jointList" class="joint-list"></div>
+          <div class="axis-scale"><span>-180°</span><span>0°</span><span>180°</span></div>
+        </div>
+
+        <div class="log-panel">
+          <div class="subheading">
+            <h3>实时日志</h3>
+            <button id="clearLogsBtn" class="icon-button" type="button" title="清空显示">⌫</button>
+          </div>
+          <div id="logView" class="log-view" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>控制台仅监听 127.0.0.1</span>
+    <span>强杀进程或通信断开不保证完成失能</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/static/control_center.js"></script>
+</body>
+</html>
+

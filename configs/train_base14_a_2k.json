@@ -1,0 +1,39 @@
+{
+  "dataset": {
+    "repo_id": "local/nero_red_cube_base14_v1_train",
+    "root": "D:/NERO/outputs/red_cube_base14_video_v1/train",
+    "video_backend": "pyav"
+  },
+  "seed": 42,
+  "num_workers": 0,
+  "batch_size": 8,
+  "steps": 2000,
+  "eval_freq": 0,
+  "log_freq": 100,
+  "save_freq": 2000,
+  "wandb": {
+    "enable": false
+  },
+  "output_dir": "D:/NERO/outputs/train/base14_a_2k_v1",
+  "job_name": "base14_a_2k_v1",
+  "policy": {
+    "type": "act",
+    "device": "cuda",
+    "use_amp": true,
+    "push_to_hub": false,
+    "chunk_size": 60,
+    "n_action_steps": 10,
+    "image_dropout": 0.0,
+    "env_state_dropout": 0.0,
+    "input_feature_keys": [
+      "observation.images.wrist",
+      "observation.state"
+    ],
+    "normalization_mapping": {
+      "VISUAL": "MEAN_STD",
+      "STATE": "MEAN_STD",
+      "ACTION": "MEAN_STD",
+      "ENV": "MEAN_STD"
+    }
+  }
+}

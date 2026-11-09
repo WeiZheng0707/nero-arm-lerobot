@@ -1,0 +1,14 @@
+{
+  "base_roi": [35, 5, 575, 470],
+  "bag_roi": null,
+  "cube_color": "red",
+  "morphology_kernel": 3,
+  "cube_min_area": 100,
+  "cube_max_area": 6000,
+  "bag_min_area": 1200,
+  "bag_max_area": 60000,
+  "cube_max_jump": 0.1,
+  "bag_max_jump": 0.06,
+  "hold_frames": 3,
+  "max_age_s": 0.34
+}

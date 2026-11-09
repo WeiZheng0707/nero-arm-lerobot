@@ -1,0 +1,7 @@
+{
+  "base_roi": [35, 5, 575, 470],
+  "bag_roi": null,
+  "cube_color": "red",
+  "morphology_kernel": 3,
+  "bag_min_size_ratio": 0.7
+}

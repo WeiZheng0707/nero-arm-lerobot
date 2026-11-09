@@ -1,0 +1,48 @@
+{
+  "dataset": {
+    "repo_id": "local/nero_red_cube_base14_v1_train",
+    "root": "D:/NERO/outputs/red_cube_base14_video_v1/train",
+    "video_backend": "pyav",
+    "use_imagenet_stats": false
+  },
+  "output_dir": "D:/NERO/outputs/train/pi05_dual_lora_smoke_200_v1",
+  "job_name": "pi05_dual_lora_smoke_200_v1",
+  "seed": 42,
+  "num_workers": 0,
+  "batch_size": 1,
+  "steps": 200,
+  "eval_freq": 0,
+  "log_freq": 10,
+  "save_freq": 100,
+  "wandb": {
+    "enable": false
+  },
+  "policy": {
+    "type": "pi05",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "push_to_hub": false,
+    "train_expert_only": true,
+    "freeze_vision_encoder": true,
+    "lora_enabled": true,
+    "lora_rank": 8,
+    "lora_alpha": 16.0,
+    "lora_dropout": 0.05,
+    "input_feature_keys": [
+      "observation.images.base",
+      "observation.images.wrist",
+      "observation.state"
+    ],
+    "tokenizer_name_or_path": "C:\\Users\\Administrator\\Desktop\\lerobot_nero_standalone_backup_20261019_before_changes\\lerobot_nero_standalone_backup_20261019_before_changes\\outputs\\model\\tokenizer",
+    "quantile_stats_path": "C:\\Users\\Administrator\\Desktop\\lerobot_nero_standalone_backup_20261019_before_changes\\lerobot_nero_standalone_backup_20261019_before_changes\\configs\\pi05_red_cube_quantiles.json",
+    "empty_cameras": 1,
+    "chunk_size": 50,
+    "n_action_steps": 10,
+    "gradient_checkpointing": true,
+    "optimizer_lr": 0.0001,
+    "optimizer_weight_decay": 0.0001,
+    "scheduler_warmup_steps": 20,
+    "scheduler_decay_steps": 200,
+    "scheduler_decay_lr": 1e-05
+  }
+}
